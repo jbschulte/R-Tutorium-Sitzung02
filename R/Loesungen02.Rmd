@@ -1,0 +1,34 @@
+---
+title: "Sitzung 2: Erste Schritte (Lösungen)"
+author: "Jonas Schulte"
+date: "2023-04-10"
+output: pdf_document
+---
+
+## Benötigte Packages
+```{r}
+library(gapminder)
+```
+
+
+## Übungsaufgabe III
+1. Berechne das arithmetische Mittel, die Standardabweichung und den Median des BIP pro Kopfs und interpretiere die Ergebnisse.
+```{r}
+mean(gapminder$gdpPercap)
+sd(gapminder$gdpPercap)
+median(gapminder$gdpPercap)
+```
+
+2. Was ist der höchste, was der tiefste Wert für das BIP pro Kopf im Datensatz? Bonus: In welchem Land in welchem Jahr wurde das Maximum bzw. Minimum gemessen?
+```{r}
+max(gapminder$gdpPercap)
+gapminder[which(gapminder$gdpPercap == max(gapminder$gdpPercap)),]
+min(gapminder$gdpPercap)
+gapminder[which(gapminder$gdpPercap == min(gapminder$gdpPercap)),]
+```
+
+3. Erstelle ein Histogram und interpretiere die Verteilung des BIP pro Kopfs
+
+```{r}
+hist(gapminder$gdpPercap)
+```

@@ -1,0 +1,115 @@
+---
+title: "Sitzung 2: Erste Schritte (Notizen)"
+author: "Jonas Schulte"
+date: "2023-04-10"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message = FALSE)
+```
+
+## Benötigte Packages
+Zu Beginn eines jeden R-Markdown Dokument, binden wir mit der Funktion `library()` die Pakete ein, die wir für unsere Analyse benötigen. Wir benötigen das Package `gapminder`, das uns einen Datensatz bereitstellt.
+```{r}
+library(gapminder) 
+# falls nicht installiert, den folgenden Befehl ausführen: 
+# install.packages("gapminder")
+```
+
+## Datensatz
+Nachdem wir das Package `gapminder` mit dem `library()`-Befehl eingebunden haben, können wir den Datensatz aufrufen, in dem wir den Namen des Datensatzes in der Console oder in einem Chunk ausführen. Der Datensatz trägt - wie das Paket - den Objektnamen `gapminder`. 
+```{r}
+gapminder
+```
+
+Gerade bei großen Datensätzen wollen wir uns nicht immer den gesamten Datensatz anschauen. Mit den Funktionen `head()` und `tail()` können wir uns nur den Anfang und das Ende des Datensatzes ausgeben lassen.
+```{r}
+head(gapminder)
+tail(gapminder)
+```
+
+
+
+## Übersichtsstatistiken
+
+Die Funktion `nrow()` zählt die Zeilen eines Datensatzes.
+```{r}
+nrow(gapminder)
+```
+
+Häufig wollen wir Funktionen nicht auf den ganzen Datensatz anwenden, sondern auf eine Variable bzw. eine Spalte des Datensatzes. Eine einzelne Spalte können wir adressieren, in dem wir nach dem Datensatznamen ein Dollarzeichen, gefolgt vom Spaltennamen schreiben und ausführen.
+```{r, results = FALSE}
+gapminder$country
+```
+
+Die Funktion `unique()` entfernt Duplikate in einem Vektor. Sie ist hilfreich, um zu prüfen, welche Länder in unserem Datensatz enthalten sind.
+```{r}
+unique(gapminder$country)
+```
+
+
+Viele der statistischen Operation, wie Durchschnitt, Median oder Standardabweichungen haben in R relativ eindeutige Namen. So können wir bsp. mit `mean()` das arithmetische Mittel, mit `sd()` die Standardabweichung und mit `median()` den Median berechnen. Im folgenden berechnen wir einige Übersichtsstatistiken für die Lebenserwartung. 
+```{r}
+mean(gapminder$lifeExp)
+sd(gapminder$lifeExp)
+median(gapminder$lifeExp)
+hist(gapminder$lifeExp)
+max(gapminder$lifeExp)
+gapminder[which(gapminder$lifeExp == max(gapminder$lifeExp)),]
+min(gapminder$lifeExp)
+gapminder[which(gapminder$lifeExp == min(gapminder$lifeExp)),]
+```
+
+Bist du dir unsicher, was eine Funktion genau tut, kannst du ein Fragenzeichen gefolgt vom Funktionsnamen (ohne Klammern) in die Console eingeben. Es öffnet sich dann auf der rechten Seite eine Hilfeseite.
+```{r}
+?mean
+```
+
+## Übungsaufgabe III
+1. Berechne das arithmetische Mittel, die Standardabweichung und den Median des BIP pro Kopfs und interpretiere die Ergebnisse.
+```{r}
+# Hier den Code schreiben
+
+```
+
+2. Was ist der höchste, was der tiefste Wert für das BIP pro Kopf im Datensatz? Bonus: In welchem Land in welchem Jahr wurde das Maximum bzw. Minimum gemessen?
+```{r}
+
+```
+
+3. Erstelle ein Histogram und interpretiere die Verteilung des BIP pro Kopfs
+```{r}
+
+```
+
+
+
+
+## Bivariater Zusammenhang
+Wie hängen das BIP pro Kopf und die Lebenserwartung zusammen? Wir vermuten, dass reichere Länder auch eine höhere Lebenserwartung haben. Um diese These zu überprüfen, ist es hilfreich, die Daten zunächst zu plotten und den Zusammenhang grafisch zu betrachten. Für ein einfaches Streudiagramm können wir die Funktion plot() verwenden. Innerhalb der Klammer müssen wir angeben, welche Daten auf der x- und welche auf der y-Achse abgebildet werden sollen. Später werden wir noch weitere Funktionen kennenlernen, die ansprechendere Grafiken erstellen können.
+
+```{r}
+plot(x = gapminder$gdpPercap, y = gapminder$lifeExp)
+```
+Der Korrelationskoeffizient ist ein Maß für den Grad und die Richtung des Zusammenhangs zwischen zwei Variablen misst. Werte reichen von -1 (perfekt negative Korrelation) über 0 (keine Korrelation) bis +1 (perfekt positive Korrelation). In R können wir die Korrelation mit der Funktion `cor()` bestimmen.
+```{r}
+cor(gapminder$gdpPercap, gapminder$lifeExp)
+```
+
+Sowohl das Streudiagramm, als auch der Korrelationskoeffizient bestätigen unsere Vermutung, dass das BIP pro Kopf und die Lebenserwartung positiv zusammenhängen. Wir können versuchen den Zusammenhang in der einfachsten Art und Weise zu modellieren, in dem wir annehmen, dass der Zusammenhang linear ist. Grafisch bedeutet das, dass wir eine Gerade durch unsere Datenpunkte legen, die den Zusammenhang "best möglichst" modeliert. 
+```{r}
+plot(x = gapminder$gdpPercap, y = gapminder$lifeExp)
+abline(lm(gapminder$lifeExp ~ gapminder$gdpPercap), col = "blue")
+```
+
+Eine Gerade, die den Zusammenhang besonders gut annähernd beschreibt, kann mit Hilfe der linearen Regression bestimmt werden (weitere Details dazu werden in der Vorlesung und im Tutorium in den kommenden Wochen behandelt). Mit der Funktion lm() können wir den Achsenabschnitt und die Steigung dieser Geraden bestimmen.
+```{r}
+lm(formula = gapminder$lifeExp ~ gapminder$gdpPercap)
+```
+
+
+## Übungsaufgabe IV
+1. Berechne den Korrelationskoeffizienten zwischen dem BIP pro Kopf und der Lebenserwartung und interpretiere das Ergebnis.
+2. Berechne mit Hilfe des `lm()`-Befehls den Achsenabschnitt und die Steigung der Geraden.
+3. Interpretiere die Steigung der Geraden. Tipp: Zeichne ein Steigungsdreieck und multipliziere die Werte mit 1000.
